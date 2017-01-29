@@ -1,3 +1,4 @@
 *
 !.spacemacs
 !.gitignore
+!.config/powerline/*
