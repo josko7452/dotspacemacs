@@ -55,6 +55,7 @@ values."
      version-control
      colors
      java
+     themes-megapack
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -143,7 +144,7 @@ values."
                                :size 12
                                :weight normal
                                :width normal
-                               :powerline-scale 1.1)
+                               :powerline-scale 1.0)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -324,6 +325,7 @@ you should place your code here."
   (set-fill-column 80)
   (add-hook 'text-mode-hook 'my_modes_setup)
   (add-hook 'prog-mode-hook 'my_modes_setup)
+  (setq powerline-default-separator 'nil)
 
   (setq-default indent-tabs-mode nil)
   (setq-default tab-width 4)
