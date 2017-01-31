@@ -1,7 +1,7 @@
 {
 	"common": {
 		"term_truecolor": false,
-        "term_escape_style": "auto"
+        "term_escape_style": "xterm"
 	},
 	"ext": {
 		"ipython": {
@@ -18,7 +18,7 @@
 			"theme": "default"
 		},
 		"shell": {
-			"colorscheme": "solarized",
+			"colorscheme": "default",
 			"theme": "default_leftonly",
 			"local_themes": {
 				"continuation": "continuation",

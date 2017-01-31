@@ -47,7 +47,7 @@ values."
      markdown
      org
      (shell :variables
-            shell-default-shell 'multi-term
+;            shell-default-shell 'ansi-term
             shell-default-height 30
             shell-default-position 'bottom)
      spell-checking
@@ -55,13 +55,12 @@ values."
      version-control
      colors
      java
-     themes-megapack
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(color-theme-solarized xterm-color)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -133,8 +132,7 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(sanityinc-solarized-dark
-                         spacemacs-dark
+   dotspacemacs-themes '(spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
@@ -143,7 +141,7 @@ values."
    dotspacemacs-default-font '("Source Code Pro for Powerline"
                                :size 12
                                :weight normal
-                               :width normal
+                               :width medium
                                :powerline-scale 1.0)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
@@ -322,10 +320,20 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  (server-start)
+  (set-terminal-parameter nil 'background-mode 'dark)
+  (set-frame-parameter nil 'background-mode 'dark)
+  (spacemacs/load-theme 'solarized)
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+              (let ((mode (if (display-graphic-p frame) 'light 'dark)))
+                (set-frame-parameter frame 'background-mode mode)
+                (set-terminal-parameter frame 'background-mode mode))
+              (enable-theme 'solarized)))
   (set-fill-column 80)
   (add-hook 'text-mode-hook 'my_modes_setup)
   (add-hook 'prog-mode-hook 'my_modes_setup)
-  (setq powerline-default-separator 'nil)
+  (setq powerline-default-separator 'bar)
 
   (setq-default indent-tabs-mode nil)
   (setq-default tab-width 4)
