@@ -55,6 +55,7 @@ values."
      version-control
      colors
      java
+     (mu4e :variables mu4e-enable-notifications t)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -311,6 +312,49 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
     (windmove-default-keybindings 'meta)
     (setq x-alt-keysym 'meta)
+
+      (setq mu4e-maildir "~/mail"
+            mu4e-get-mail-command "mbsync -a"
+            mu4e-update-interval 100
+            mu4e-compose-signature-auto-include nil
+            mu4e-view-show-images t
+            mu4e-view-show-addresses t)
+
+      (setq mu4e-html2text-command "w3m -dump -T text/html")
+      (setq mu4e-enable-mode-line t)
+      (setq mu4e-enable-notifications t)
+      (with-eval-after-load 'mu4e-alert
+        ;; Enable Desktop notifications
+        (mu4e-alert-set-default-style 'notifications)) ; For linux
+
+    (setq mu4e-sent-folder "/cern/Sent Items"
+          mu4e-drafts-folder "/cern/Drafts"
+          mu4e-trash-folder  "/cern/Deleted Items")
+
+ (setq mu4e-account-alist
+        '(("gmail"
+           ;; Under each account, set the account-specific variables you want.
+           (mu4e-sent-folder "/gmail/[Gmail]/.Sent Mail")
+           (mu4e-drafts-folder "/gmail/[Gmail]/.Drafts")
+           (mu4e-trash-folder  "/gmail/[Gmail]/.Bin")
+           (smtpmail-smtp-user "bruno.kremel@gmail.com")
+           (smtpmail-smtp-server "smtp.gmail.com")
+           (smtpmail-stream-type starttls)
+           (smtpmail-smtp-service 587)
+           (user-mail-address "bruno.kremel@gmail.com")
+           (user-full-name "Bruno Kremel"))
+          ("cern"
+           (mu4e-sent-folder "/cern/Sent Items")
+           (mu4e-drafts-folder "/cern/Drafts")
+           (mu4e-trash-folder  "/cern/Deleted Items")
+           (smtpmail-smtp-user "bkremel")
+           (smtpmail-smtp-server "smtp.cern.ch")
+           (smtpmail-stream-type starttls)
+           (smtpmail-smtp-service 587)
+           (user-mail-address "bruno.kremel@cern.ch")
+           (user-full-name "Bruno Kremel"))))
+
+ (mu4e/mail-account-reset)
   )
 
 (defun dotspacemacs/user-config ()
@@ -351,6 +395,7 @@ you should place your code here."
   (global-set-key (kbd "M-<down>") 'evil-window-down)
   (global-set-key (kbd "M-<up>") 'evil-window-up)
   (global-set-key (kbd "M-<right>") 'evil-window-right)
+
   )
 
 
@@ -361,11 +406,12 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(send-mail-function (quote smtpmail-send-it))
  '(vhdl-clock-name "aclk")
  '(vhdl-company-name "CERN BE-RF-FB")
  '(vhdl-copyright-string "Copyright (c) <year> <company>")
  '(vhdl-file-header
-   "-- <filename>
+        "-- <filename>
 -- <copyright>
 -- Author: <author>
 -- Date: <date>
