@@ -1,0 +1,43 @@
+IMAPAccount gmail
+Host imap.gmail.com
+User bruno.kremel@gmail.com
+PassCmd "~/imap-pass -g bruno.kremel@gmail.com"
+UseIMAPS yes
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPAccount cern
+Host imap.cern.ch
+User bruno.kremel@cern.ch
+PassCmd "~/imap-pass -g bruno.kremel@cern.ch"
+UseIMAPS yes
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore gmail-remote
+Account gmail
+
+MaildirStore gmail-local
+Path ~/mail/gmail/
+Inbox ~/mail/gmail/INBOX
+
+IMAPStore cern-remote
+Account cern
+
+MaildirStore cern-local
+Path ~/mail/cern/
+Inbox ~/mail/cern/INBOX
+
+Channel gmail
+Master :gmail-remote:
+Slave :gmail-local:
+Patterns INBOX "[Gmail]/Sent Mail" "[Gmail]/Drafts" "[Gmail]/Bin" INBOX/*
+Create Both
+Expunge Both
+SyncState *
+
+Channel cern
+Master :cern-remote:
+Slave :cern-local:
+Patterns INBOX "Deleted Items" Outbox "Sent Items" "Drafts" INBOX/*
+Create Both
+Expunge Both
+SyncState *
