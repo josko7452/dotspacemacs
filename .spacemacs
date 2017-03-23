@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+    html
      javascript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -312,20 +313,19 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
     (windmove-default-keybindings 'meta)
     (setq x-alt-keysym 'meta)
+    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
 
       (setq mu4e-maildir "~/mail"
             mu4e-get-mail-command "mbsync -a"
             mu4e-update-interval 100
             mu4e-compose-signature-auto-include nil
             mu4e-view-show-images t
+            mu4e-index-update-error-continue t
             mu4e-view-show-addresses t)
 
       (setq mu4e-html2text-command "w3m -dump -T text/html")
       (setq mu4e-enable-mode-line t)
-      (setq mu4e-enable-notifications t)
-      (with-eval-after-load 'mu4e-alert
-        ;; Enable Desktop notifications
-        (mu4e-alert-set-default-style 'notifications)) ; For linux
+      (mu4e-alert-set-default-style 'libnotify)
 
     (setq mu4e-sent-folder "/cern/Sent Items"
           mu4e-drafts-folder "/cern/Drafts"
@@ -354,7 +354,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
            (user-mail-address "bruno.kremel@cern.ch")
            (user-full-name "Bruno Kremel"))))
 
- (mu4e/mail-account-reset)
   )
 
 (defun dotspacemacs/user-config ()
@@ -383,7 +382,7 @@ you should place your code here."
   (setq-default tab-width 4)
   (setq vhdl-basic-offset 4)
   (setq indent-line-function 'insert-tab)
-  (smart-tabs-advice vhdl-indent-line vhdl-basic-offset)
+  ;;(smart-tabs-advice vhdl-indent-line vhdl-basic-offset)
   (setq vhdl-indent-tabs-mode t)
   (setq-default TeX-PDF-mode t)
   (global-git-commit-mode t)
@@ -395,7 +394,8 @@ you should place your code here."
   (global-set-key (kbd "M-<down>") 'evil-window-down)
   (global-set-key (kbd "M-<up>") 'evil-window-up)
   (global-set-key (kbd "M-<right>") 'evil-window-right)
-
+  (mu4e/mail-account-reset)
+  (setq org-download-screenshot-method "scrot -s %s")
   )
 
 
