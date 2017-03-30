@@ -48,7 +48,7 @@ values."
      markdown
      org
      (shell :variables
-;            shell-default-shell 'ansi-term
+            shell-default-shell 'shell
             shell-default-height 30
             shell-default-position 'bottom)
      spell-checking
@@ -382,8 +382,8 @@ you should place your code here."
   (setq-default tab-width 4)
   (setq vhdl-basic-offset 4)
   (setq indent-line-function 'insert-tab)
-  ;;(smart-tabs-advice vhdl-indent-line vhdl-basic-offset)
-  (setq vhdl-indent-tabs-mode t)
+  (smart-tabs-advice vhdl-indent-line vhdl-basic-offset)
+  (setq vhdl-indent-tabs-mode nil)
   (setq-default TeX-PDF-mode t)
   (global-git-commit-mode t)
   (global-set-key (kbd "M-h") 'evil-window-left)
