@@ -46,7 +46,7 @@ values."
      emacs-lisp
      git
      markdown
-     org
+     (org :eval-after-load :variables org-projectile-file "TODOs.org")
      (shell :variables
             shell-default-shell 'shell
             shell-default-height 30
@@ -56,7 +56,10 @@ values."
      version-control
      colors
      java
-     (mu4e :variables mu4e-enable-notifications t)
+     (mu4e :variables '(mu4e-account-alist t
+           mu4e-installation-path "/usr/share/emacs/site-lisp"))
+     (c-c++ :variables
+              c-c++-default-mode-for-headers 'c++-mode)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -109,7 +112,7 @@ values."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'hybrid
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -134,7 +137,8 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(spacemacs-dark
+   dotspacemacs-themes '(sanityinc-solarized-dark
+                         spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
@@ -311,28 +315,41 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-    (windmove-default-keybindings 'meta)
-    (setq x-alt-keysym 'meta)
-    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+    (setq mu4e-maildir "~/mail"
+          mu4e-get-mail-command "mbsync -a"
+          mu4e-update-interval 100
+          mu4e-compose-signature-auto-include nil
+          mu4e-view-show-images t
+          mu4e-index-update-error-continue t
+          mu4e-view-show-addresses t)
 
-      (setq mu4e-maildir "~/mail"
-            mu4e-get-mail-command "mbsync -a"
-            mu4e-update-interval 100
-            mu4e-compose-signature-auto-include nil
-            mu4e-view-show-images t
-            mu4e-index-update-error-continue t
-            mu4e-view-show-addresses t)
-
-      (setq mu4e-html2text-command "w3m -dump -T text/html")
-      (setq mu4e-enable-mode-line t)
-      (mu4e-alert-set-default-style 'libnotify)
+    (setq mu4e-html2text-command "w3m -dump -T text/html")
+    (setq mu4e-enable-mode-line t)
 
     (setq mu4e-sent-folder "/cern/Sent Items"
           mu4e-drafts-folder "/cern/Drafts"
           mu4e-trash-folder  "/cern/Deleted Items")
 
- (setq mu4e-account-alist
-        '(("gmail"
+  )
+
+(defun dotspacemacs/user-config ()
+  "Configuration function for user code.
+This function is called at the very end of Spacemacs initialization after
+layers configuration.
+This is the place where most of your configurations should be done. Unless it is
+explicitly specified that a variable should be set before a package is loaded,
+you should place your code here."
+  (server-start)
+  (set-terminal-parameter nil 'background-mode 'dark)
+  (set-frame-parameter nil 'background-mode 'dark)
+  (set-fill-column 80)
+  (add-hook 'text-mode-hook 'my_modes_setup)
+  (add-hook 'prog-mode-hook 'my_modes_setup)
+  (setq powerline-default-separator 'arrow)
+
+
+(setq mu4e-account-alist
+    '(("gmail"
            ;; Under each account, set the account-specific variables you want.
            (mu4e-sent-folder "/gmail/[Gmail]/.Sent Mail")
            (mu4e-drafts-folder "/gmail/[Gmail]/.Drafts")
@@ -353,50 +370,47 @@ before packages are loaded. If you are unsure, you should try in setting them in
            (smtpmail-smtp-service 587)
            (user-mail-address "bruno.kremel@cern.ch")
            (user-full-name "Bruno Kremel"))))
+(mu4e/mail-account-reset)
 
-  )
-
-(defun dotspacemacs/user-config ()
-  "Configuration function for user code.
-This function is called at the very end of Spacemacs initialization after
-layers configuration.
-This is the place where most of your configurations should be done. Unless it is
-explicitly specified that a variable should be set before a package is loaded,
-you should place your code here."
-  (server-start)
-  (set-terminal-parameter nil 'background-mode 'dark)
-  (set-frame-parameter nil 'background-mode 'dark)
-  ;(spacemacs/load-theme 'solarized)
-  ;(add-hook 'after-make-frame-functions
-  ;          (lambda (frame)
-  ;            (let ((mode (if (display-graphic-p frame) 'light 'dark)))
-  ;              (set-frame-parameter frame 'background-mode mode)
-  ;              (set-terminal-parameter frame 'background-mode mode))
-  ;            (enable-theme 'solarized)))
-  (set-fill-column 80)
-  (add-hook 'text-mode-hook 'my_modes_setup)
-  (add-hook 'prog-mode-hook 'my_modes_setup)
-  (setq powerline-default-separator 'arrow)
+(with-eval-after-load 'org
+  (require 'ob-ditaa)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((ditaa . t)))
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-startup-indented t)
+  ;; Update images from babel code blocks automatically
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t))
 
   (setq-default indent-tabs-mode nil)
   (setq-default tab-width 4)
   (setq vhdl-basic-offset 4)
+  (setq c-default-style "linux"
+        tab-width 4
+        c-basic-offset 4
+        indent-tabs-mode nil)
   (setq indent-line-function 'insert-tab)
   (smart-tabs-advice vhdl-indent-line vhdl-basic-offset)
   (setq vhdl-indent-tabs-mode nil)
   (setq-default TeX-PDF-mode t)
   (global-git-commit-mode t)
-  (global-set-key (kbd "M-h") 'evil-window-left)
-  (global-set-key (kbd "M-j") 'evil-window-down)
-  (global-set-key (kbd "M-k") 'evil-window-up)
-  (global-set-key (kbd "M-l") 'evil-window-right)
-  (global-set-key (kbd "M-<left>") 'evil-window-left)
-  (global-set-key (kbd "M-<down>") 'evil-window-down)
-  (global-set-key (kbd "M-<up>") 'evil-window-up)
-  (global-set-key (kbd "M-<right>") 'evil-window-right)
   (mu4e/mail-account-reset)
   (setq org-download-screenshot-method "scrot -s %s")
-  )
+  (with-eval-after-load 'mu4e-alert
+    ;; Enable Desktop notifications
+    (mu4e-alert-set-default-style 'notifications)) ; For linux
+
+  (setq mu4e-enable-notifications t)
+
+  (with-eval-after-load 'org-agenda
+    (require 'org-projectile)
+    (push (org-projectile:todo-files) org-agenda-files))
+  (setq spaceline-org-clock-p t)
+
+
+)
 
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -406,12 +420,19 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-agenda-files
+   (quote
+    ("~/org/main.org" "~/org/gmail-cal.org" "~/org/sviatky.org")))
+ '(package-selected-packages
+   (quote
+    (org-plus-contrib yapfify xterm-color ws-butler winum which-key wgrep web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org tagedit spaceline smex smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs request rainbow-mode rainbow-identifiers rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-download org-bullets open-junk-file neotree mwim multi-term mu4e-maildirs-extension mu4e-alert move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ivy-hydra info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-make google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-correct-ivy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump disaster diff-hl define-word cython-mode counsel-projectile company-web company-tern company-statistics company-emacs-eclim company-c-headers company-anaconda column-enforce-mode color-theme-sanityinc-solarized color-identifiers-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ac-ispell)))
+ '(python-shell-interpreter "ipython3" t)
  '(send-mail-function (quote smtpmail-send-it))
  '(vhdl-clock-name "aclk")
  '(vhdl-company-name "CERN BE-RF-FB")
  '(vhdl-copyright-string "Copyright (c) <year> <company>")
  '(vhdl-file-header
-        "-- <filename>
+   "-- <filename>
 -- <copyright>
 -- Author: <author>
 -- Date: <date>
