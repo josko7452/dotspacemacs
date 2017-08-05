@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     csv
     html
      javascript
      ;; ----------------------------------------------------------------
@@ -46,7 +47,10 @@ values."
      emacs-lisp
      git
      markdown
-     (org :eval-after-load :variables org-projectile-file "TODOs.org")
+     (org :eval-after-load :variables
+          org-projectile-file "TODOs.org"
+          org-agenda-files '("~/org/main.org" "~/org/agenda.org")
+          )
      (shell :variables
             shell-default-shell 'shell
             shell-default-height 30
@@ -329,7 +333,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
     (setq mu4e-sent-folder "/cern/Sent Items"
           mu4e-drafts-folder "/cern/Drafts"
           mu4e-trash-folder  "/cern/Deleted Items")
-
   )
 
 (defun dotspacemacs/user-config ()
@@ -372,6 +375,11 @@ you should place your code here."
            (user-full-name "Bruno Kremel"))))
 (mu4e/mail-account-reset)
 
+(with-eval-after-load 'org-agenda
+  (require 'org-projectile)
+  (setq org-agenda-files (append org-agenda-files (org-projectile:todo-files)))
+)
+
 (with-eval-after-load 'org
   (require 'ob-ditaa)
   (org-babel-do-load-languages
@@ -404,11 +412,7 @@ you should place your code here."
 
   (setq mu4e-enable-notifications t)
 
-  (with-eval-after-load 'org-agenda
-    (require 'org-projectile)
-    (push (org-projectile:todo-files) org-agenda-files))
   (setq spaceline-org-clock-p t)
-
 
 )
 
@@ -420,13 +424,10 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files
-   (quote
-    ("~/org/main.org" "~/org/gmail-cal.org" "~/org/sviatky.org")))
  '(package-selected-packages
    (quote
-    (org-plus-contrib yapfify xterm-color ws-butler winum which-key wgrep web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org tagedit spaceline smex smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs request rainbow-mode rainbow-identifiers rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-download org-bullets open-junk-file neotree mwim multi-term mu4e-maildirs-extension mu4e-alert move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ivy-hydra info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-make google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-correct-ivy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump disaster diff-hl define-word cython-mode counsel-projectile company-web company-tern company-statistics company-emacs-eclim company-c-headers company-anaconda column-enforce-mode color-theme-sanityinc-solarized color-identifiers-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ac-ispell)))
- '(python-shell-interpreter "ipython3" t)
+    (csv-mode org-plus-contrib yapfify xterm-color ws-butler winum which-key wgrep web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org tagedit spaceline smex smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs request rainbow-mode rainbow-identifiers rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-download org-bullets open-junk-file neotree mwim multi-term mu4e-maildirs-extension mu4e-alert move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ivy-hydra info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-make google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-correct-ivy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump disaster diff-hl define-word cython-mode counsel-projectile company-web company-tern company-statistics company-emacs-eclim company-c-headers company-anaconda column-enforce-mode color-theme-sanityinc-solarized color-identifiers-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ac-ispell)))
+ '(python-shell-interpreter "ipython3")
  '(send-mail-function (quote smtpmail-send-it))
  '(vhdl-clock-name "aclk")
  '(vhdl-company-name "CERN BE-RF-FB")
