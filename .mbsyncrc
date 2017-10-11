@@ -1,14 +1,14 @@
 IMAPAccount gmail
 Host imap.gmail.com
 User bruno.kremel@gmail.com
-PassCmd "~/imap-pass -g bruno.kremel@gmail.com"
+PassCmd "cat ~/.google-mail-passwd"
 UseIMAPS yes
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 
 IMAPAccount cern
 Host imap.cern.ch
 User bruno.kremel@cern.ch
-PassCmd "~/imap-pass -g bruno.kremel@cern.ch"
+PassCmd "cat ~/.cern-mail-passwd"
 UseIMAPS yes
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 
